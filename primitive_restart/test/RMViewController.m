@@ -1,5 +1,5 @@
 //
-//  RMViewController.mm
+//  RMViewController.m
 //  test
 //
 //  Created by ramemiso on 2013/09/23.
@@ -193,7 +193,7 @@ enum
 #ifdef PRIMITIVE_RESTART_ENABLED
 	uint32_t indexCount = sizeof(teapot_indices) / sizeof(teapot_indices[0]);
 	glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_SHORT, NULL);
-	#else
+#else
 	uint32_t indexCount = sizeof(new_teapot_indicies) / sizeof(new_teapot_indicies[0]);
 	uint32_t currentIndex = 0;
 	while (currentIndex < indexCount)
