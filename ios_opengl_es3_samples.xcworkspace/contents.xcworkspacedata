@@ -7,4 +7,7 @@
    <FileRef
       location = "group:primitive_restart/primitive_restart.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:shadow_samplers/shadow_samplers.xcodeproj">
+   </FileRef>
 </Workspace>
