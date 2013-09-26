@@ -13,7 +13,7 @@ in highp vec4 shadowCoord;
 
 out mediump vec4 fragColor;
 
-uniform highp sampler2DShadow shadowTexture;
+uniform lowp sampler2DShadow shadowTexture;
 uniform highp vec3 lightPosition;
 
 const lowp vec4 defuseColor = vec4(0.4, 0.4, 1.0, 1.0);
