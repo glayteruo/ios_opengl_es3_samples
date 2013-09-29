@@ -10,4 +10,7 @@
    <FileRef
       location = "group:shadow_samplers/shadow_samplers.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:variance_shadowmap/variance_shadowmap.xcodeproj">
+   </FileRef>
 </Workspace>
