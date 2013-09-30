@@ -13,4 +13,7 @@
    <FileRef
       location = "group:variance_shadowmap/variance_shadowmap.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:etc2_eac/etc2_eac.xcodeproj">
+   </FileRef>
 </Workspace>
