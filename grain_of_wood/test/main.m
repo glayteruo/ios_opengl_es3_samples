@@ -1,8 +1,8 @@
 //
 //  main.m
-//  shadow_samplers
+//  test
 //
-//  Created by ramemiso on 2013/09/25.
+//  Created by ramemiso on 2013/09/23.
 //  Copyright (c) 2013年 ramemiso. All rights reserved.
 //
 

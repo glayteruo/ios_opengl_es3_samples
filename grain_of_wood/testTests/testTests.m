@@ -1,18 +1,18 @@
 //
-//  shadow_samplersTests.m
-//  shadow_samplersTests
+//  testTests.m
+//  testTests
 //
-//  Created by ramemiso on 2013/09/25.
+//  Created by ramemiso on 2013/09/23.
 //  Copyright (c) 2013年 ramemiso. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
 
-@interface shadow_samplersTests : XCTestCase
+@interface testTests : XCTestCase
 
 @end
 
-@implementation shadow_samplersTests
+@implementation testTests
 
 - (void)setUp
 {

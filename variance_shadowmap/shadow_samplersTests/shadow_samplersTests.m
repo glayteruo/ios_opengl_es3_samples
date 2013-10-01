@@ -2,8 +2,8 @@
 //  shadow_samplersTests.m
 //  shadow_samplersTests
 //
-//  Created by makoto takebe on 2013/09/25.
-//  Copyright (c) 2013年 kplab. All rights reserved.
+//  Created by ramemiso on 2013/09/25.
+//  Copyright (c) 2013年 ramemiso. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>

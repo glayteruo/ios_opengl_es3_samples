@@ -16,4 +16,7 @@
    <FileRef
       location = "group:etc2_eac/etc2_eac.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:grain_of_wood/grain_of_wood.xcodeproj">
+   </FileRef>
 </Workspace>
