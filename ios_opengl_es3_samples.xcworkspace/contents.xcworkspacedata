@@ -19,4 +19,7 @@
    <FileRef
       location = "group:grain_of_wood/grain_of_wood.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:hatching/hatching.xcodeproj">
+   </FileRef>
 </Workspace>
