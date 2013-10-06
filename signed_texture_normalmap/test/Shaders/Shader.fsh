@@ -22,7 +22,8 @@ const mediump float specularPower = 5.0;
 
 void main()
 {
-	mediump vec3 n = texture(normalTexture, texcoord).xyz;
+	mediump vec3 n;
+	n.xy = texture(normalTexture, texcoord).xy;
 	n.z = sqrt(1.0 - dot(n.xy, n.xy));
 	n = normalize(n);
 	
