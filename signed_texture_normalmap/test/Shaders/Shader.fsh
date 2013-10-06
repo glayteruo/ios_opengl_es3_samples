@@ -25,7 +25,6 @@ void main()
 	mediump vec3 n;
 	n.xy = texture(normalTexture, texcoord).xy;
 	n.z = sqrt(1.0 - dot(n.xy, n.xy));
-	n = normalize(n);
 	
 	mediump vec3 l = normalize(light);
 	mediump vec3 v = normalize(view);
