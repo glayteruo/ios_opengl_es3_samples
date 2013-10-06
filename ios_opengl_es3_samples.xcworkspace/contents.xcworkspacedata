@@ -22,4 +22,7 @@
    <FileRef
       location = "group:hatching/hatching.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:signed_texture_normalmap/signed_texture_normalmap.xcodeproj">
+   </FileRef>
 </Workspace>
