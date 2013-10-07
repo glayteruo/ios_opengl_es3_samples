@@ -25,4 +25,7 @@
    <FileRef
       location = "group:signed_texture_normalmap/signed_texture_normalmap.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:displacement_mapping/displacement_mapping.xcodeproj">
+   </FileRef>
 </Workspace>
