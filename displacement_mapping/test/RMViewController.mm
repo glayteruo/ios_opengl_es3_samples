@@ -39,7 +39,7 @@ struct VertexData
 
 static const int32_t DivCount = 256;
 static const int32_t GridCount = DivCount * DivCount;
-static const int32_t IndexCount = 6 * GridCount;
+static const int32_t IndexCount = 2 * DivCount * (DivCount + 1) + DivCount;
 
 
 @interface RMViewController () {
@@ -122,6 +122,7 @@ static const int32_t IndexCount = 6 * GridCount;
     
     glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
 	
 	std::vector<VertexData> vertexBuffer;
 	std::vector<uint16_t> indexBuffer;
@@ -146,22 +147,18 @@ static const int32_t IndexCount = 6 * GridCount;
 			
 	int32_t xCount = DivCount + 1;
 	
-	for (int32_t i = 0; i < GridCount; ++i)
+	for (int32_t y = 0; y < DivCount; ++y)
 	{
-		auto tmp0 = i + i / DivCount;
-		auto tmp1 = tmp0 + 1;
-		auto tmp2 = tmp0 + xCount;
-		auto tmp3 = tmp2 + 1;
+		for (int32_t x = 0; x <= DivCount; ++x)
+		{
+			auto idx0 = x + y * xCount;
+			auto idx1 = idx0 + xCount;
+			indexBuffer.push_back(idx1);
+			indexBuffer.push_back(idx0);
+		}
 		
-		indexBuffer.push_back(tmp0);
-		indexBuffer.push_back(tmp1);
-		indexBuffer.push_back(tmp2);
-
-		indexBuffer.push_back(tmp2);
-		indexBuffer.push_back(tmp1);
-		indexBuffer.push_back(tmp3);
+		indexBuffer.push_back(0xFFFF);
 	}
-
 	
     glGenVertexArrays(1, &_vao);
     glBindVertexArray(_vao);
@@ -255,7 +252,7 @@ static const int32_t IndexCount = 6 * GridCount;
 	glBindSampler(0, _heightSampler);
 	glUniform1i(uniforms[UNIFORM_HEIGHT_TEXTURE], 0);
 	
-    glDrawElements(GL_TRIANGLES, IndexCount, GL_UNSIGNED_SHORT, NULL);
+    glDrawElements(GL_TRIANGLE_STRIP, IndexCount, GL_UNSIGNED_SHORT, NULL);
 }
 
 #pragma mark -  OpenGL ES 2 shader compilation
