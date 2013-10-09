@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		033F82FE1801227B001259E4 /* normalmap.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 033F82FD1801226E001259E4 /* normalmap.ktx */; };
+		033F830418055656001259E4 /* normalmap2.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 033F83031805564D001259E4 /* normalmap2.ktx */; };
 		039EF7B817F94EB6005DAE91 /* KTXLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 039EF7B617F94EB6005DAE91 /* KTXLoader.cpp */; };
 		03A784F617EFE3FF00453902 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03A784F517EFE3FF00453902 /* Foundation.framework */; };
 		03A784F817EFE3FF00453902 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03A784F717EFE3FF00453902 /* CoreGraphics.framework */; };
@@ -42,6 +43,7 @@
 
 /* Begin PBXFileReference section */
 		033F82FD1801226E001259E4 /* normalmap.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; name = normalmap.ktx; path = Textures/normalmap.ktx; sourceTree = "<group>"; };
+		033F83031805564D001259E4 /* normalmap2.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; name = normalmap2.ktx; path = Textures/normalmap2.ktx; sourceTree = "<group>"; };
 		039EF7B617F94EB6005DAE91 /* KTXLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KTXLoader.cpp; sourceTree = "<group>"; };
 		039EF7B717F94EB6005DAE91 /* KTXLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KTXLoader.h; sourceTree = "<group>"; };
 		03A784F217EFE3FF00453902 /* signed_texture_normalmap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = signed_texture_normalmap.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,6 +101,7 @@
 		039EF7B517F948F4005DAE91 /* Textures */ = {
 			isa = PBXGroup;
 			children = (
+				033F83031805564D001259E4 /* normalmap2.ktx */,
 				033F82FD1801226E001259E4 /* normalmap.ktx */,
 			);
 			name = Textures;
@@ -262,6 +265,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				033F830418055656001259E4 /* normalmap2.ktx in Resources */,
 				033F82FE1801227B001259E4 /* normalmap.ktx in Resources */,
 				03A7851217EFE3FF00453902 /* Shader.fsh in Resources */,
 				03A7851017EFE3FF00453902 /* Main_iPad.storyboard in Resources */,

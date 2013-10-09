@@ -142,7 +142,7 @@ GLfloat gPolyData[] =
     glBindVertexArray(0);
 	
 	// テクスチャ読み込み
-	NSString* texPath = [[NSBundle mainBundle] pathForResource:@"normalmap" ofType:@"ktx"];
+	NSString* texPath = [[NSBundle mainBundle] pathForResource:@"normalmap2" ofType:@"ktx"];
 	NSData* texData = [NSData dataWithContentsOfFile:texPath];
 	
 	bool hasMipmap = false;
@@ -187,7 +187,7 @@ GLfloat gPolyData[] =
 	
 	GLKMatrix4 viewMatrix = GLKMatrix4MakeLookAt(0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
     
-	GLKMatrix4 modelMatrix = GLKMatrix4MakeRotation(sin(_rotation) * 1.5, 0.0f, 1.0f, 0.0f);
+	GLKMatrix4 modelMatrix = GLKMatrix4MakeRotation(sin(_rotation) * 0.5, 0.0f, 1.0f, 0.0f);
     
 	_normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
     
