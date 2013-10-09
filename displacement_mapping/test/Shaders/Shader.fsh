@@ -19,21 +19,21 @@ uniform mediump float height;
 
 const lowp vec4 diffuseColor = vec4(0.8, 0.8, 1.0, 1.0);
 const lowp vec4 specularColor = vec4(1.0, 1.0, 1.0, 1.0);
-const mediump float specularPower = 8.0;
+const mediump float specularPower = 5.0;
 
 void main()
 {
 	mediump vec2 texSize = vec2(textureSize(heightTexture, 0));
 
-	mediump float t0 = textureOffset(heightTexture, texcoord, ivec2(-1.0, 0.0)).r;
-	mediump float t1 = textureOffset(heightTexture, texcoord, ivec2( 1.0, 0.0)).r;
-	mediump vec3 t = vec3(2.0 / texSize.x, 0.0, (t1 - t0) * height);
+	mediump float nx0 = textureOffset(heightTexture, texcoord, ivec2(-1.0, 0.0)).r;
+	mediump float nx1 = textureOffset(heightTexture, texcoord, ivec2( 1.0, 0.0)).r;
+	mediump vec3 nx = vec3(2.0 / texSize.x, 0.0, (nx1 - nx0) * height);
 
-	mediump float b0 = textureOffset(heightTexture, texcoord, ivec2(0.0, -1.0)).r;
-	mediump float b1 = textureOffset(heightTexture, texcoord, ivec2(0.0,  1.0)).r;
-	mediump vec3 b = vec3(0.0, 2.0 / texSize.y, (b1 - b0) * height);
+	mediump float ny0 = textureOffset(heightTexture, texcoord, ivec2(0.0, -1.0)).r;
+	mediump float ny1 = textureOffset(heightTexture, texcoord, ivec2(0.0,  1.0)).r;
+	mediump vec3 ny = vec3(0.0, 2.0 / texSize.y, (ny1 - ny0) * height);
 	
-	mediump vec3 n = normalize(cross(t, b));
+	mediump vec3 n = normalize(cross(nx, ny));
 	mediump vec3 l = normalize(light);
 	mediump vec3 v = normalize(view);
 	mediump vec3 h = normalize(l + v);

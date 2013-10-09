@@ -18,7 +18,7 @@
 enum
 {
     UNIFORM_MODELVIEWPROJECTION_MATRIX,
-	UNIFORM_INVNORMAL_MATRIX,
+	UNIFORM_NORMAL_MATRIX,
     UNIFORM_HEIGHT_TEXTURE,
 	UNIFORM_HEIGHT,
     NUM_UNIFORMS
@@ -29,6 +29,8 @@ GLint uniforms[NUM_UNIFORMS];
 enum
 {
 	ATTRIB_POSITION,
+	ATTRIB_NORMAL,
+	ATTRIB_TANGENT,
 	ATTRIB_TEXCOORD,
 };
 
@@ -47,7 +49,7 @@ static const int32_t IndexCount = 2 * DivCount * (DivCount + 1) + DivCount;
     GLuint _program;
     
     GLKMatrix4 _modelViewProjectionMatrix;
-	GLKMatrix3 _invNormalMatrix;
+	GLKMatrix3 _normalMatrix;
 	
 	GLuint _heightTexture;
 	GLuint _heightSampler;
@@ -176,6 +178,9 @@ static const int32_t IndexCount = 2 * DivCount * (DivCount + 1) + DivCount;
     glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), BUFFER_OFFSET(0));
     glEnableVertexAttribArray(ATTRIB_TEXCOORD);
     glVertexAttribPointer(ATTRIB_TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), BUFFER_OFFSET(12));
+
+	glVertexAttrib3f(ATTRIB_NORMAL, 0.0f, 0.0f, 1.0f);
+	glVertexAttrib3f(ATTRIB_TANGENT, 1.0f, 0.0f, 0.0f);
     
     glBindVertexArray(0);
 	
@@ -206,7 +211,7 @@ static const int32_t IndexCount = 2 * DivCount * (DivCount + 1) + DivCount;
 - (void)tearDownGL
 {
     [EAGLContext setCurrentContext:self.context];
-    
+  	  
 	glDeleteBuffers(1, &_ibo);
     glDeleteBuffers(1, &_vbo);
     glDeleteVertexArrays(1, &_vao);
@@ -228,14 +233,12 @@ static const int32_t IndexCount = 2 * DivCount * (DivCount + 1) + DivCount;
     
 	GLKMatrix4 modelMatrix = GLKMatrix4MakeRotation(sin(_rotation) * 1.5, 0.0f, 1.0f, 0.0f);
     
-	_invNormalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
-	_invNormalMatrix = GLKMatrix3Invert(_invNormalMatrix, NULL);
+	_normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelMatrix), NULL);
     
 	GLKMatrix4 modelViewMatrix = GLKMatrix4Multiply(viewMatrix, modelMatrix);
 	_modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
     
 	_rotation += self.timeSinceLastUpdate * 1.0f;
-//	_rotation = -0.8f;
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -248,7 +251,7 @@ static const int32_t IndexCount = 2 * DivCount * (DivCount + 1) + DivCount;
     glUseProgram(_program);
     
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, GL_FALSE, _modelViewProjectionMatrix.m);
-    glUniformMatrix3fv(uniforms[UNIFORM_INVNORMAL_MATRIX], 1, GL_FALSE, _invNormalMatrix.m);
+    glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, GL_FALSE, _normalMatrix.m);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _heightTexture);
@@ -312,7 +315,7 @@ static const int32_t IndexCount = 2 * DivCount * (DivCount + 1) + DivCount;
     
     // Get uniform locations.
     uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(_program, "modelViewProjectionMatrix");
-    uniforms[UNIFORM_INVNORMAL_MATRIX] = glGetUniformLocation(_program, "invNormalMatrix");
+    uniforms[UNIFORM_NORMAL_MATRIX] = glGetUniformLocation(_program, "normalMatrix");
     uniforms[UNIFORM_HEIGHT_TEXTURE] = glGetUniformLocation(_program, "heightTexture");
     uniforms[UNIFORM_HEIGHT] = glGetUniformLocation(_program, "height");
     
