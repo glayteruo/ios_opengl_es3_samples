@@ -32,7 +32,7 @@ const vec3 LightDirection = vec3(0.0, 0.0, 1.0);
 void main()
 {
 	vec4 pos = vertexPosition;
-	pos.z = texture(heightTexture, vertexTexcoord).r * height;
+	pos.xyz += vertexNormal * texture(heightTexture, vertexTexcoord).r * height;
 	gl_Position = modelViewProjectionMatrix * pos;
 
 	texcoord = vertexTexcoord;
