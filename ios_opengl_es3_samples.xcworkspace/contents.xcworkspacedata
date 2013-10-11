@@ -28,4 +28,7 @@
    <FileRef
       location = "group:displacement_mapping/displacement_mapping.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:srgb_gamma_correction_output/srgb_gamma_correction_output.xcodeproj">
+   </FileRef>
 </Workspace>
