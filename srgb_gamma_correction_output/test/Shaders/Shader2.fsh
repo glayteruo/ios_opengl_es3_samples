@@ -8,9 +8,6 @@
 
 #version 300 es
 
-#define GAMMA_CORRECTION_ENABLED
-#define GAMMA 2.2
-
 in mediump vec4 color;
 
 out mediump vec4 fragColor;

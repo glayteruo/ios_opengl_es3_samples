@@ -231,7 +231,7 @@ enum
 #ifdef GAMMA_CORRECTION_ENABLED
 	gray = powf(gray, 1.0f / GAMMA);
 #endif	
-    glClearColor(gray, gray, gray, gray);
+    glClearColor(gray, gray, gray, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     glBindVertexArray(_vao);
