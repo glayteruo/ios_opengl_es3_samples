@@ -34,4 +34,7 @@
    <FileRef
       location = "group:srgb_gamma_correction_input/srgb_gamma_correction_input.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:transform_feedback_particles/transform_feedback_particles.xcodeproj">
+   </FileRef>
 </Workspace>
