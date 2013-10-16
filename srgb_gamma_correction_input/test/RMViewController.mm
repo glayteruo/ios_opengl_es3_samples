@@ -249,7 +249,7 @@ enum
 	glSamplerParameteri(_diffuseSampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glSamplerParameteri(_diffuseSampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glSamplerParameteri(_diffuseSampler, GL_TEXTURE_MIN_FILTER, (hasMipmap) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-	glSamplerParameteri(_diffuseSampler, GL_TEXTURE_MAG_FILTER, GL_REPEAT);
+	glSamplerParameteri(_diffuseSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 - (void)tearDownGL
