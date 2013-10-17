@@ -8,7 +8,7 @@
 
 #version 300 es
 
-#define DISCARD_ENABLED
+//#define DISCARD_ENABLED
 
 flat in lowp vec4 color;
 flat in int vertexId;
