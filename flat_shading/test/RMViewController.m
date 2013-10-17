@@ -10,23 +10,18 @@
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 
-#include "KTXLoader.h"
-
-#include <algorithm>
-#include <vector>
+#include "teapot.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-static const int32_t ParticleCount = 100;
+#define PRIMITIVE_RESTART_ENABLED
 
 // Uniform index.
 enum
 {
     UNIFORM_MODELVIEWPROJECTION_MATRIX,
-	UNIFORM_DELTA_TIME,
-	UNIFORM_STAR_TEXTURE,
-
-	NUM_UNIFORMS
+    UNIFORM_NORMAL_MATRIX,
+    NUM_UNIFORMS
 };
 GLint uniforms[NUM_UNIFORMS];
 
@@ -34,43 +29,29 @@ GLint uniforms[NUM_UNIFORMS];
 enum
 {
 	ATTRIB_POSITION,
-	ATTRIB_VELOCITY,
-	ATTRIB_COLOR,
-	ATTRIB_SIZE,
+	ATTRIB_NORMAL,
 };
 
-struct ParticleVertex
-{
-	GLfloat posX, posY, posZ;
-	GLfloat velX, velY, velZ;
-	GLfloat colR, colG, colB;
-	GLfloat size;
-};
-
-struct ParticleBuffer
-{
-    GLuint vao;
-    GLuint vbo;
-	GLuint feedback;
-};
 
 @interface RMViewController () {
     GLuint _program;
     
     GLKMatrix4 _modelViewProjectionMatrix;
+    GLKMatrix3 _normalMatrix;
+    float _rotation;
     
-	uint32_t _drawBufferIndex;
-	ParticleBuffer _particleBuffer[2];
-		
-	GLuint _starTexture;
-	GLuint _starSampler;
+    GLuint _vao;
+	
+    GLuint _vbo_position;
+    GLuint _vbo_normal;
+    GLuint _ibo;
 }
 @property (strong, nonatomic) EAGLContext *context;
 
 - (void)setupGL;
 - (void)tearDownGL;
 
-- (BOOL)loadShaders:(GLuint*)program path:(NSString*)path;
+- (BOOL)loadShaders;
 - (BOOL)compileShader:(GLuint *)shader type:(GLenum)type file:(NSString *)file;
 - (BOOL)linkProgram:(GLuint)prog;
 - (BOOL)validateProgram:(GLuint)prog;
@@ -88,8 +69,6 @@ struct ParticleBuffer
         NSLog(@"Failed to create ES context");
     }
     
-	self.preferredFramesPerSecond = 60;
-	
     GLKView *view = (GLKView *)self.view;
     view.context = self.context;
 	view.drawableColorFormat = GLKViewDrawableColorFormatSRGBA8888;
@@ -129,111 +108,50 @@ struct ParticleBuffer
 {
     [EAGLContext setCurrentContext:self.context];
     
-    [self loadShaders:&_program path:@"Shader"];
-	
-	uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(_program, "modelViewProjectionMatrix");
-	uniforms[UNIFORM_DELTA_TIME] = glGetUniformLocation(_program, "deltaTime");
-    uniforms[UNIFORM_STAR_TEXTURE] = glGetUniformLocation(_program, "starTexture");
+    [self loadShaders];
+    
+    glEnable(GL_DEPTH_TEST);
 
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_ONE, GL_ONE);
+#ifdef PRIMITIVE_RESTART_ENABLED
+	glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+#endif
 	
-	
-	auto getRand_0_1 = [] {
-		float val = rand();
-		val /= RAND_MAX;
-		
-		return val;
-	};
-	auto getRand_m1_1 = [&] {
-		float val = getRand_0_1();
-		return val * 2.0f - 1.0f;
-	};
-	
-	std::vector<ParticleVertex> vertexList(ParticleCount);
-	for (auto& vertex : vertexList)
-	{
-		vertex.posX = 0.0f;
-		vertex.posY = 0.0f;
-		vertex.posZ = 0.0f;
-		
-		vertex.velX = getRand_m1_1() * 0.2 + 0.2;
-		vertex.velY = getRand_m1_1() * 0.5 + 0.5;
-		vertex.velZ = getRand_m1_1() * 0.05;
-		
-		vertex.colR = getRand_0_1();
-		vertex.colG = getRand_0_1();
-		vertex.colB = getRand_0_1();
-		
-		vertex.size = 0.0f;
-	}
-	
-	_drawBufferIndex = 0;
-	
-for (auto& particleBuffer : _particleBuffer)
-{
-	glGenVertexArrays(1, &particleBuffer.vao);
-	glBindVertexArray(particleBuffer.vao);
-	
-	glGenBuffers(1, &particleBuffer.vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, particleBuffer.vbo);
-	glBufferData(GL_ARRAY_BUFFER, vertexList.size() * sizeof(vertexList[0]), vertexList.data(), GL_STATIC_DRAW);
-	
-	glEnableVertexAttribArray(ATTRIB_POSITION);
-	glEnableVertexAttribArray(ATTRIB_VELOCITY);
-	glEnableVertexAttribArray(ATTRIB_COLOR);
-	glEnableVertexAttribArray(ATTRIB_SIZE);
-	
-	glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(ParticleVertex), BUFFER_OFFSET(0));
-	glVertexAttribPointer(ATTRIB_VELOCITY, 3, GL_FLOAT, GL_FALSE, sizeof(ParticleVertex), BUFFER_OFFSET(12));
-	glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, sizeof(ParticleVertex), BUFFER_OFFSET(24));
-	glVertexAttribPointer(ATTRIB_SIZE, 1, GL_FLOAT, GL_FALSE, sizeof(ParticleVertex), BUFFER_OFFSET(36));
-	
-	glBindVertexArray(0);
+    glGenVertexArrays(1, &_vao);
+    glBindVertexArray(_vao);
+    
+    glGenBuffers(1, &_vbo_position);
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo_position);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(teapot_vertices), teapot_vertices, GL_STATIC_DRAW);
+    
+    glEnableVertexAttribArray(ATTRIB_POSITION);
+    glVertexAttribPointer(ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 12, BUFFER_OFFSET(0));
 
+	glGenBuffers(1, &_vbo_normal);
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo_normal);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(teapot_normals), teapot_normals, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(ATTRIB_NORMAL);
+    glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 12, BUFFER_OFFSET(0));
 	
-	glGenTransformFeedbacks(1, &particleBuffer.feedback);
-	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, particleBuffer.feedback);
-	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, particleBuffer.vbo);
+	glGenBuffers(1, &_ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
 	
-	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
-}
-	
-	NSString* starPath = [[NSBundle mainBundle] pathForResource:@"star" ofType:@"ktx" inDirectory:@"Textures"];
-	NSData* starData = [NSData dataWithContentsOfFile:starPath];
-	
-	bool hasMipmap = false;
-	try
-	{
-		auto info = KTXLoader::Load(starData.bytes, starData.length, false);
-		_starTexture = info.name;
-		hasMipmap = info.hasMipmap;
-	}
-	catch (std::exception e)
-	{
-		NSLog(@"%s", e.what());
-	}
-	
-	glGenSamplers(1, &_starSampler);
-	glSamplerParameteri(_starSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glSamplerParameteri(_starSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glSamplerParameteri(_starSampler, GL_TEXTURE_MIN_FILTER, (hasMipmap) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-	glSamplerParameteri(_starSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+#ifdef PRIMITIVE_RESTART_ENABLED
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(teapot_indices), teapot_indices, GL_STATIC_DRAW);
+#else
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(new_teapot_indicies), new_teapot_indicies, GL_STATIC_DRAW);
+#endif
+    glBindVertexArray(0);
 }
 
 - (void)tearDownGL
 {
     [EAGLContext setCurrentContext:self.context];
     
-	for (auto& particleBuffer : _particleBuffer)
-	{
-		glDeleteTransformFeedbacks(1, &particleBuffer.feedback);
-	    glDeleteBuffers(1, &particleBuffer.vbo);
-    	glDeleteVertexArrays(1, &particleBuffer.vao);
-	}
-	
-	glDeleteTextures(1, &_starTexture);
+	glDeleteBuffers(1, &_ibo);
+    glDeleteBuffers(1, &_vbo_normal);
+    glDeleteBuffers(1, &_vbo_position);
+    glDeleteVertexArrays(1, &_vao);
     
     if (_program) {
         glDeleteProgram(_program);
@@ -250,83 +168,78 @@ for (auto& particleBuffer : _particleBuffer)
 	
 	GLKMatrix4 viewMatrix = GLKMatrix4MakeLookAt(0.0f, 0.2f, 0.5f, 0.0f, 0.05f, 0.0f, 0.0f, 1.0f, 0.0f);
     
-	GLKMatrix4 modelMatrix = GLKMatrix4MakeTranslation(-0.2f, -0.2f, 0.0f);
+	GLKMatrix4 modelMatrix = GLKMatrix4MakeRotation(_rotation, 0.0f, 1.0f, 0.0f);
     
 	GLKMatrix4 modelViewMatrix = GLKMatrix4Multiply(viewMatrix, modelMatrix);
+	
+    _normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelViewMatrix), NULL);
     
     _modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
+    
+    _rotation += self.timeSinceLastUpdate * 1.0f;
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glBindVertexArray(_particleBuffer[_drawBufferIndex].vao);
+    
+    glBindVertexArray(_vao);
+    
     glUseProgram(_program);
-	
+    
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, _modelViewProjectionMatrix.m);
-	glUniform1f(uniforms[UNIFORM_DELTA_TIME], self.timeSinceLastDraw);
+    glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, 0, _normalMatrix.m);
 	
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _starTexture);
-	glUniform1i(uniforms[UNIFORM_STAR_TEXTURE], 0);
-	glBindSampler(0, _starSampler);
-	
-	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, _particleBuffer[_drawBufferIndex ^ 1].feedback);
-	glBeginTransformFeedback(GL_POINTS);
+#ifdef PRIMITIVE_RESTART_ENABLED
+	uint32_t indexCount = sizeof(teapot_indices) / sizeof(teapot_indices[0]);
+	glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_SHORT, NULL);
+#else
+	uint32_t indexCount = sizeof(new_teapot_indicies) / sizeof(new_teapot_indicies[0]);
+	uint32_t currentIndex = 0;
+	while (currentIndex < indexCount)
 	{
-		glDrawArrays(GL_POINTS, 0, ParticleCount);
+		uint32_t triangleCount = new_teapot_indicies[currentIndex];
+		
+		glDrawElements(GL_TRIANGLE_STRIP, triangleCount, GL_UNSIGNED_SHORT, BUFFER_OFFSET((currentIndex + 1) * sizeof(uint16_t)));
+		currentIndex += triangleCount + 1;
 	}
-	glEndTransformFeedback();
-	
-	_drawBufferIndex ^= 1;
-	
+#endif
 }
 
 #pragma mark -  OpenGL ES 2 shader compilation
 
-- (BOOL)loadShaders:(GLuint*)program path:(NSString*)path
+- (BOOL)loadShaders
 {
     GLuint vertShader, fragShader;
     NSString *vertShaderPathname, *fragShaderPathname;
     
     // Create shader program.
-    GLuint programTmp = glCreateProgram();
+    _program = glCreateProgram();
     
     // Create and compile vertex shader.
-    vertShaderPathname = [[NSBundle mainBundle] pathForResource:path ofType:@"vsh"];
+    vertShaderPathname = [[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"vsh"];
     if (![self compileShader:&vertShader type:GL_VERTEX_SHADER file:vertShaderPathname]) {
         NSLog(@"Failed to compile vertex shader");
         return NO;
     }
     
     // Create and compile fragment shader.
-    fragShaderPathname = [[NSBundle mainBundle] pathForResource:path ofType:@"fsh"];
+    fragShaderPathname = [[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"];
     if (![self compileShader:&fragShader type:GL_FRAGMENT_SHADER file:fragShaderPathname]) {
         NSLog(@"Failed to compile fragment shader");
         return NO;
     }
     
     // Attach vertex shader to program.
-    glAttachShader(programTmp, vertShader);
+    glAttachShader(_program, vertShader);
     
     // Attach fragment shader to program.
-    glAttachShader(programTmp, fragShader);
-	
-	// Transform Feedback
-	const char* feedbackNames[] = {
-		"feedbackPosition",
-		"feedbackVelocity",
-		"feedbackColor",
-		"feedbackSize",
-	};
-	GLsizei count = sizeof(feedbackNames) / sizeof(feedbackNames[0]);
-	glTransformFeedbackVaryings(programTmp, count, feedbackNames, GL_INTERLEAVED_ATTRIBS);
-
+    glAttachShader(_program, fragShader);
+	   
     // Link program.
-    if (![self linkProgram:programTmp]) {
-        NSLog(@"Failed to link program: %d", programTmp);
+    if (![self linkProgram:_program]) {
+        NSLog(@"Failed to link program: %d", _program);
         
         if (vertShader) {
             glDeleteShader(vertShader);
@@ -336,25 +249,28 @@ for (auto& particleBuffer : _particleBuffer)
             glDeleteShader(fragShader);
             fragShader = 0;
         }
-        if (programTmp) {
-            glDeleteProgram(programTmp);
-            programTmp = 0;
+        if (_program) {
+            glDeleteProgram(_program);
+            _program = 0;
         }
         
         return NO;
     }
     
+    // Get uniform locations.
+    uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(_program, "modelViewProjectionMatrix");
+    uniforms[UNIFORM_NORMAL_MATRIX] = glGetUniformLocation(_program, "normalMatrix");
+    
     // Release vertex and fragment shaders.
     if (vertShader) {
-        glDetachShader(programTmp, vertShader);
+        glDetachShader(_program, vertShader);
         glDeleteShader(vertShader);
     }
     if (fragShader) {
-        glDetachShader(programTmp, fragShader);
+        glDetachShader(_program, fragShader);
         glDeleteShader(fragShader);
     }
     
-	*program = programTmp;
     return YES;
 }
 

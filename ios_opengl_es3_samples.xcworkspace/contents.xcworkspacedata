@@ -37,4 +37,7 @@
    <FileRef
       location = "group:transform_feedback_particles/transform_feedback_particles.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:flat_shading/flat_shading.xcodeproj">
+   </FileRef>
 </Workspace>
