@@ -40,4 +40,7 @@
    <FileRef
       location = "group:flat_shading/flat_shading.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:instanced_rendering/instanced_rendering.xcodeproj">
+   </FileRef>
 </Workspace>
