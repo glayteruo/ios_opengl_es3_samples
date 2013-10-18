@@ -43,4 +43,7 @@
    <FileRef
       location = "group:instanced_rendering/instanced_rendering.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:instanced_attribute/instanced_attribute.xcodeproj">
+   </FileRef>
 </Workspace>
