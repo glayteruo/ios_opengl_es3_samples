@@ -46,4 +46,7 @@
    <FileRef
       location = "group:instanced_attribute/instanced_attribute.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:mrt_edge/mrt_edge.xcodeproj">
+   </FileRef>
 </Workspace>
