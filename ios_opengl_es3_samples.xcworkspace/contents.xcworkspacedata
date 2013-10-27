@@ -49,4 +49,10 @@
    <FileRef
       location = "group:mrt_edge/mrt_edge.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:rgb10_a2_hdr/rgb10_a2_hdr.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:sampler_objects/sampler_objects.xcodeproj">
+   </FileRef>
 </Workspace>
