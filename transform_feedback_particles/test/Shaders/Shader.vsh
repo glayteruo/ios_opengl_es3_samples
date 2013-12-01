@@ -33,16 +33,10 @@ const float SizeSpeed = 100.0;
 const float MaxSize = 50.0;
 
 // -1.0〜1.0の乱数を取得
-float rand_m1_1(vec2 seed)
-{
-	return sin(dot(seed.xy, vec2(12.9898, 78.233))* 43758.5453);
-}
+#define rand_m1_1(seed) (sin(dot(seed.xy, vec2(12.9898, 78.233)) * 43758.5453))
 
 // 0.0〜1.0の乱数を取得
-float rand_0_1(vec2 seed)
-{
-	return rand_m1_1(seed) * 0.5 + 0.5;
-}
+#define rand_0_1(seed) (rand_m1_1(seed) * 0.5 + 0.5)
 
 void main()
 {
@@ -66,7 +60,7 @@ void main()
 	}
 	
 	// 適当な位置まで落ちたら初期化して再利用
-	if (newPosition.y < -2.0)
+	if (newPosition.y < -0.2)
 	{
 		newVelocity = vec3(rand_0_1(newColor.rg) * 0.2 + 0.2, rand_0_1(newColor.gb) * 0.5 + 0.5, rand_0_1(newColor.gr) * 0.05);
 		newColor.rgb = vec3(rand_0_1(newColor.rr), rand_0_1(newColor.bb), rand_0_1(newColor.gg));

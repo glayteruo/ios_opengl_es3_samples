@@ -17,7 +17,7 @@
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-static const int32_t ParticleCount = 100;
+static const int32_t ParticleCount = 200;
 
 // Uniform index.
 enum
@@ -266,7 +266,12 @@ for (auto& particleBuffer : _particleBuffer)
     glUseProgram(_program);
 	
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, _modelViewProjectionMatrix.m);
-	glUniform1f(uniforms[UNIFORM_DELTA_TIME], self.timeSinceLastDraw);
+
+	float maxDt = (1.0f / 60);
+	float dt = (maxDt < self.timeSinceLastDraw)
+	? maxDt
+	: self.timeSinceLastDraw;
+	glUniform1f(uniforms[UNIFORM_DELTA_TIME], dt);
 	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _starTexture);

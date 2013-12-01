@@ -411,7 +411,7 @@ struct DrawObject
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	GLKMatrix4 shadowViewMat = GLKMatrix4MakeLookAt(_lightPosition.x, _lightPosition.y, _lightPosition.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-    GLKMatrix4 shadowProjMat = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), 1.0f, 1.0f, 100.0f);
+    GLKMatrix4 shadowProjMat = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), 1.0f, 3.0f, 10.0f);
     GLKMatrix4 shadowViewProjMat = GLKMatrix4Multiply(shadowProjMat, shadowViewMat);
 
 	drawFunc(1, _cubeObject, shadowViewProjMat, GLKMatrix4Identity, GL_TRIANGLES, 36);
@@ -450,7 +450,7 @@ struct DrawObject
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
-    GLKMatrix4 projMat = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), aspect, 1.0f, 100.0f);
+    GLKMatrix4 projMat = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), aspect, 3.0f, 10.0f);
 	GLKMatrix4 viewMat = GLKMatrix4MakeLookAt(0.0f, 2.5f, 3.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 	GLKMatrix4 viewProjMat = GLKMatrix4Multiply(projMat, viewMat);
 	

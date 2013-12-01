@@ -27,11 +27,11 @@ void main()
 
 	mediump float nx0 = textureOffset(heightTexture, texcoord, ivec2(-1.0, 0.0)).r;
 	mediump float nx1 = textureOffset(heightTexture, texcoord, ivec2( 1.0, 0.0)).r;
-	mediump vec3 nx = vec3(2.0 / texSize.x, 0.0, (nx1 - nx0) * height);
+	highp vec3 nx = vec3(2.0 / texSize.x, 0.0, (nx1 - nx0) * height);
 
 	mediump float ny0 = textureOffset(heightTexture, texcoord, ivec2(0.0, -1.0)).r;
 	mediump float ny1 = textureOffset(heightTexture, texcoord, ivec2(0.0,  1.0)).r;
-	mediump vec3 ny = vec3(0.0, 2.0 / texSize.y, (ny1 - ny0) * height);
+	highp vec3 ny = vec3(0.0, 2.0 / texSize.y, (ny1 - ny0) * height);
 	
 	mediump vec3 n = normalize(cross(nx, ny));
 	mediump vec3 l = normalize(light);
