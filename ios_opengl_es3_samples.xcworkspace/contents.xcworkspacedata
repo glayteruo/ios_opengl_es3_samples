@@ -55,4 +55,7 @@
    <FileRef
       location = "group:sampler_objects/sampler_objects.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:uniform_buffer_object/uniform_buffer_object.xcodeproj">
+   </FileRef>
 </Workspace>
