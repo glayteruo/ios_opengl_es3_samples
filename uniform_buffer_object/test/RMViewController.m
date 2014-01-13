@@ -56,8 +56,8 @@ static GLKVector3 rotationList[MAX_INSTANCE_COUNT] =
 
 @interface RMViewController () {
     GLuint _programList[MAX_INSTANCE_COUNT];
+	GLuint _uniformBlockIndexList[MAX_INSTANCE_COUNT];
 	
-	GLuint _uniformBlockIndex;
 	GLint _uniformBlockSize;
 	GLubyte* _uniformBlockBuffer;
 	GLuint _uniformBlockIndeces[UNIFORM_BLOCK_INDEX_COUNT];
@@ -140,6 +140,10 @@ static GLKVector3 rotationList[MAX_INSTANCE_COUNT] =
     
     [self loadShaders:&_programList[0] file:@"Shader0"];
     [self loadShaders:&_programList[1] file:@"Shader1"];
+
+	// ユニフォームブロックインデックス取得
+	_uniformBlockIndexList[0] = glGetUniformBlockIndex(_programList[0], "CommonMatrix");
+	_uniformBlockIndexList[1] = glGetUniformBlockIndex(_programList[1], "CommonMatrix");
 	
     // ユニフォームの取得
 	GLuint program = _programList[0];
@@ -148,11 +152,8 @@ static GLKVector3 rotationList[MAX_INSTANCE_COUNT] =
     uniforms[UNIFORM_MODEL_MATRIX] = glGetUniformLocation(program, "modelMatrix");
     uniforms[UNIFORM_NORMAL_MATRIX] = glGetUniformLocation(program, "normalMatrix");
 	
-	// ユニフォームブロックインデックス取得
-	_uniformBlockIndex = glGetUniformBlockIndex(program, "CommonMatrix");
-	
 	// ユニフォームブロックサイズ取得
-	glGetActiveUniformBlockiv(program, _uniformBlockIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &_uniformBlockSize);
+	glGetActiveUniformBlockiv(program, _uniformBlockIndexList[0], GL_UNIFORM_BLOCK_DATA_SIZE, &_uniformBlockSize);
     
 	// バッファ確保
 	_uniformBlockBuffer = (GLubyte*)malloc(_uniformBlockSize);
@@ -260,7 +261,7 @@ static GLKVector3 rotationList[MAX_INSTANCE_COUNT] =
 		glUseProgram(_programList[i]);
 		
 		// ユニフォームバッファオブジェクトをバインド
-		glBindBufferBase(GL_UNIFORM_BUFFER, _uniformBlockIndex, _ubo);
+		glBindBufferBase(GL_UNIFORM_BUFFER, _uniformBlockIndexList[i], _ubo);
 		
 		glUniformMatrix4fv(uniforms[UNIFORM_MODEL_MATRIX], 1, GL_FALSE, _modelMatrixList[i].m);
 		glUniformMatrix3fv(uniforms[UNIFORM_NORMAL_MATRIX], 1, GL_FALSE, _normalMatrixList[i].m);
