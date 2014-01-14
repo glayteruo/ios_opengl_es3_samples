@@ -58,4 +58,7 @@
    <FileRef
       location = "group:uniform_buffer_object/uniform_buffer_object.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:uniform_buffer_object_std140/uniform_buffer_object_std140.xcodeproj">
+   </FileRef>
 </Workspace>
